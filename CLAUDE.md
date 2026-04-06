@@ -47,8 +47,8 @@ Ce projet fonctionne selon un mode collaboratif asymétrique :
 ## 🏗️ Stack technique
 
 ### Backend
-- **PHP 8.3** + **Symfony 7.x**
-- **API Platform 3.x** — exposition REST + JSON-LD
+- **PHP 8.4** + **Symfony 8.x**
+- **API Platform 4.x** — exposition REST + JSON-LD
 - **Doctrine ORM** + PostgreSQL
 - **JWT Authentication** (LexikJWTAuthenticationBundle)
 

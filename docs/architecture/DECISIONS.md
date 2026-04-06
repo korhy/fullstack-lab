@@ -90,4 +90,23 @@ PostgreSQL comme base de données principale.
 
 ---
 
+## ADR-005 — Version PHP : 8.4
+
+**Date** : 2026-04-06
+**Statut** : Accepté
+
+### Contexte
+Symfony 7.x < 7.4 sont affectés par une advisory de sécurité (`PKSA-365x-2zjk-pt47`) sur `symfony/http-foundation` bloquant l'installation via Composer. Symfony 8.0 requiert PHP 8.4.
+
+### Décision
+Passer à **PHP 8.4** + **Symfony 8.0** plutôt que de contourner la politique de sécurité de Composer.
+
+### Alternatives considérées
+| Alternative | Raison du rejet |
+|-------------|----------------|
+| Symfony 7.1 / 7.2 + ignore advisory | Mauvaise pratique — contourner une alerte sécurité dans un projet pédagogique |
+| Symfony 6.4 LTS | Moins représentatif des versions actuelles |
+
+---
+
 *Ajouter les nouvelles décisions au fil du projet.*
