@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ─────────────────────────────────────────
+  # Backend — PHP / Symfony
+  # ─────────────────────────────────────────
+  backend:
+    name: Backend (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.3']
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: fullstack_lab_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo, pdo_pgsql, intl
+          coverage: xdebug
+
+      - name: Install Composer dependencies
+        working-directory: ./backend
+        run: composer install --prefer-dist --no-progress
+
+      - name: Check PHP-CS-Fixer
+        working-directory: ./backend
+        run: vendor/bin/php-cs-fixer check --diff
+
+      - name: Run PHPStan
+        working-directory: ./backend
+        run: vendor/bin/phpstan analyse
+
+      - name: Run PHPUnit
+        working-directory: ./backend
+        env:
+          DATABASE_URL: postgresql://postgres:secret@localhost:5432/fullstack_lab_test
+        run: |
+          php bin/console doctrine:database:create --env=test
+          php bin/console doctrine:migrations:migrate --env=test --no-interaction
+          vendor/bin/phpunit
+
+  # ─────────────────────────────────────────
+  # Frontend — React / TypeScript
+  # ─────────────────────────────────────────
+  frontend:
+    name: Frontend (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['20']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+          cache-dependency-path: ./frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: TypeScript check
+        working-directory: ./frontend
+        run: npm run type-check
+
+      - name: ESLint
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Run Vitest
+        working-directory: ./frontend
+        run: npm run test
