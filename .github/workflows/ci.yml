@@ -53,6 +53,10 @@ jobs:
         working-directory: ./backend
         run: vendor/bin/php-cs-fixer fix --dry-run --diff
 
+      - name: Warm up Symfony cache
+        working-directory: ./backend
+        run: php bin/console cache:warmup --env=dev
+
       - name: Run PHPStan
         working-directory: ./backend
         run: vendor/bin/phpstan analyse
