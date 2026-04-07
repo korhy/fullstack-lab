@@ -25,7 +25,9 @@ jobs:
 
       - name: Create .env for CI
         working-directory: ./backend
-        run: echo "APP_ENV=test" > .env
+        run: |
+          echo "APP_ENV=test" > .env
+          echo "DEFAULT_URI=http://localhost" >> .env
 
       - name: Install Composer dependencies
         working-directory: ./backend
