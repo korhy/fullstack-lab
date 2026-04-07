@@ -23,6 +23,10 @@ jobs:
           php-version: '8.4'
           extensions: pdo, pdo_pgsql, intl
 
+      - name: Create .env for CI
+        working-directory: ./backend
+        run: echo "APP_ENV=test" > .env
+
       - name: Install Composer dependencies
         working-directory: ./backend
         run: composer install --prefer-dist --no-progress
